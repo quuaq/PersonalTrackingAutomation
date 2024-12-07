@@ -17,7 +17,6 @@ namespace PersonalTrackingAutomation
             InitializeComponent();
         }
 
-        //Github puss örneği
         string connectionString = "Host=localhost;Port5432;Database=PersonalTrackingAutomation;Username=postgres;Password=123456";
 
         private void label1_Click(object sender, EventArgs e)
