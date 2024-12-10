@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace PersonalTrackingAutomation
 {
@@ -94,6 +95,7 @@ namespace PersonalTrackingAutomation
             maskedTextBox1.Clear();
             maskedTextBox2.Clear();
             maskedTextBox3.Clear();
+            maskedTextBox4.Clear();
             comboBox1.SelectedIndex = -1;
             comboBox2.SelectedIndex = -1;
             comboBox3.SelectedIndex = -1;
@@ -281,6 +283,12 @@ namespace PersonalTrackingAutomation
         {
             this.Text = "Personal Application";
             //Personal Applications
+            maskedTextBox1.Mask = "00000000000";
+            maskedTextBox2.Mask = "LL????????????????????";
+            maskedTextBox3.Mask = "LL????????????????????";
+            maskedTextBox4.Mask = "0000";
+            maskedTextBox4.Text = "0";
+
             comboBox1.Items.Add("Primary School");
             comboBox1.Items.Add("Middle School");
             comboBox1.Items.Add("High School");
@@ -426,6 +434,124 @@ namespace PersonalTrackingAutomation
         private void button4_Click(object sender, EventArgs e)
         {
             tabPage1_clear();
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox8_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button6_Click_1(object sender, EventArgs e)
+        {
+            string gender = "";
+            bool registerControl = false;
+
+            string connectionString = "Host=localhost;Port=5432;Database=PersonalTrackingAutomation;Username=postgres;Password=123456";
+
+            try
+            {
+                using (var connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    // TC Number'ı long olarak dönüştür
+                    if (long.TryParse(maskedTextBox1.Text, out long tcNumber))
+                    {
+                        NpgsqlCommand selectQuery = new NpgsqlCommand("SELECT * FROM personals WHERE tc_number = @tc_number", connection);
+                        selectQuery.Parameters.AddWithValue("@tc_number", tcNumber);
+
+                        using (NpgsqlDataReader registerRead = selectQuery.ExecuteReader())
+                        {
+                            while (registerRead.Read())
+                            {
+                                registerControl = true;
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("Please enter a valid TC Number!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return; // Geçersiz TC numarası girildiğinde işlemi sonlandırır.
+                    }
+                }
+
+                if (registerControl)
+                {
+                    MessageBox.Show("Register already exists!", "Personal Tracking Automation", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                if (maskedTextBox1.MaskCompleted && maskedTextBox2.MaskCompleted &&
+                    maskedTextBox3.MaskCompleted && !string.IsNullOrEmpty(comboBox1.Text) &&
+                    !string.IsNullOrEmpty(comboBox2.Text) && !string.IsNullOrEmpty(comboBox3.Text) &&
+                    maskedTextBox4.MaskCompleted)
+                {
+                    gender = radioButton1.Checked ? "Male" : "Female";
+
+                    using (var connection = new NpgsqlConnection(connectionString))
+                    {
+                        connection.Open();
+                        string insertQuery = "INSERT INTO personals (tc_number, name, surname, gender, status, date_of_birth, mission, mission_place, salary) " +
+                                             "VALUES (@tc, @name, @surname, @gender, @status, @date_of_birth, @mission, @mission_place, @salary)";
+
+                        using (var insertSorgu = new NpgsqlCommand(insertQuery, connection))
+                        {
+                            // tc_number bigint olduğu için long türünde gönderiyoruz
+                            insertSorgu.Parameters.AddWithValue("tc", long.Parse(maskedTextBox1.Text));
+
+
+                            insertSorgu.Parameters.AddWithValue("name", maskedTextBox2.Text);
+                            insertSorgu.Parameters.AddWithValue("surname", maskedTextBox3.Text);
+                            insertSorgu.Parameters.AddWithValue("gender", gender);
+                            insertSorgu.Parameters.AddWithValue("status", comboBox1.Text);
+                            insertSorgu.Parameters.AddWithValue("date_of_birth", dateTimePicker1.Value);
+                            insertSorgu.Parameters.AddWithValue("mission", comboBox2.Text);
+                            insertSorgu.Parameters.AddWithValue("mission_place", comboBox3.Text);
+
+                            if (int.TryParse(maskedTextBox4.Text, out int salary))
+                            {
+                                insertSorgu.Parameters.AddWithValue("salary", salary);
+                            }
+                            else
+                            {
+                                MessageBox.Show("Invalid salary amount!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                return;
+                            }
+
+                            insertSorgu.ExecuteNonQuery();
+                        }
+                        LoadPersonals();
+                        tabPAge2_clear();
+
+                    }
+                    MessageBox.Show("Registration successful!", "Personal Tracking Automation", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    MessageBox.Show("Please fill in all required fields!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+
+
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Something went wrong: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+
+
+        }
+
+        private void button9_Click(object sender, EventArgs e)
+        {
+            tabPAge2_clear();
         }
     }
 }
