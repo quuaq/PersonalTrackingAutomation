@@ -396,6 +396,8 @@ namespace PersonalTrackingAutomation
 
         }
 
+
+
         private void label6_Click(object sender, EventArgs e)
         {
 
@@ -413,6 +415,85 @@ namespace PersonalTrackingAutomation
 
         private void button10_Click(object sender, EventArgs e)
         {
+            bool register_search_status = false;
+            string connectionString = "Host=localhost;Port=5432;Database=PersonalTrackingAutomation;Username=postgres;Password=123456";
+
+
+            if (maskedTextBox1.Text.Length == 11)
+            {
+                try
+                {
+                    using (var connection = new NpgsqlConnection(connectionString))
+                    {
+                        connection.Open();
+
+                        string query = "SELECT * FROM personals WHERE tc_number = @tc_number";
+                        using (var selectSorgu = new NpgsqlCommand(query, connection))
+                        {
+                            selectSorgu.Parameters.AddWithValue("@tc_number", long.Parse(maskedTextBox1.Text));
+                            using (var registerReader = selectSorgu.ExecuteReader())
+                            {
+                                while (registerReader.Read())
+                                {
+                                    register_search_status = true;
+
+                                    maskedTextBox2.Text = registerReader["name"].ToString();
+                                    maskedTextBox3.Text = registerReader["surname"].ToString();
+                                    maskedTextBox4.Text = registerReader["salary"].ToString();
+
+                                    string gender = registerReader["gender"].ToString();
+                                    if (radioButton1 != null)
+                                    {
+                                        if (gender == "Male")
+                                        {
+                                            radioButton1.Checked = true;
+                                        }
+                                        else if (gender == "Female")
+                                        {
+                                            radioButton2.Checked = true;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        MessageBox.Show("RadioButton tanımlı değil.", "Hata", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                    }
+
+                                    comboBox1.Text = registerReader["status"].ToString();
+                                    comboBox2.Text = registerReader["mission"].ToString();
+                                    comboBox3.Text = registerReader["mission_place"].ToString();
+
+                                    if (DateTime.TryParse(registerReader["date_of_birth"].ToString(), out DateTime date_of_birth))
+                                    {
+                                        dateTimePicker1.Value = date_of_birth;
+                                    }
+                                    else
+                                    {
+                                        MessageBox.Show("Date of birth could not be loaded.", "Personal Tracking Automation", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                    }
+
+
+
+
+                                }
+                                if(register_search_status == false)
+                                {
+                                    MessageBox.Show("The requested record was not found", "Personal Tracking Automation", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                }
+                            }
+
+
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"An error occured: {ex.Message}", "Personal Tracking Automation", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Please enter a correct TR-Number", "Personal Tracking Automation", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
 
         }
 
@@ -552,6 +633,16 @@ namespace PersonalTrackingAutomation
         private void button9_Click(object sender, EventArgs e)
         {
             tabPAge2_clear();
+        }
+
+        private void radioButton2_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
