@@ -644,6 +644,71 @@ namespace PersonalTrackingAutomation
         {
 
         }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            string connectionString = "Host=localhost;Port=5432;Database=PersonalTrackingAutomation;Username=postgres;Password=123456";
+
+            string tc_number = maskedTextBox1.Text;
+            if(tc_number.Length != 11 || !long.TryParse(tc_number, out _))
+            {
+                MessageBox.Show("Please enter a valid TC number", "Personal Tracking Automation", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            if(string.IsNullOrWhiteSpace(maskedTextBox1.Text) ||
+               string.IsNullOrWhiteSpace(maskedTextBox2.Text) ||
+               (!radioButton1.Checked &&  !radioButton2.Checked) ||
+                string.IsNullOrWhiteSpace(comboBox1.Text) ||
+                string.IsNullOrWhiteSpace(comboBox2.Text) ||
+                string.IsNullOrWhiteSpace(comboBox3.Text) ||
+                string.IsNullOrWhiteSpace(maskedTextBox4.Text))
+                {
+                    MessageBox.Show("Please fill in all fields before updating.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+            try
+            {
+                using(var connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string updatedQuery = "UPDATE personals SET name = @name, surname = @surname, gender = @gender," +
+                                          "status = @status, mission = @mission, mission_place = @mission_place, " +
+                                          "date_of_birth = @date_of_birth, salary = @salary WHERE tc_number = @tc_number ";
+                    using (var cmd = new NpgsqlCommand(updatedQuery, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@tc_number", long.Parse(tc_number));
+                        cmd.Parameters.AddWithValue("@name", maskedTextBox2.Text);
+                        cmd.Parameters.AddWithValue("@surname", maskedTextBox3.Text);
+                        cmd.Parameters.AddWithValue("@gender", radioButton1.Checked ? "Male" : "Female");
+                        cmd.Parameters.AddWithValue("@status", comboBox1.Text);
+                        cmd.Parameters.AddWithValue("@mission", comboBox2.Text);
+                        cmd.Parameters.AddWithValue("@mission_place", comboBox3.Text);
+                        cmd.Parameters.AddWithValue("@date_of_birth", dateTimePicker1.Value);
+                        cmd.Parameters.AddWithValue("@salary", int.Parse(maskedTextBox4.Text));
+
+                        int rowsAffected = cmd.ExecuteNonQuery();
+
+                        if(rowsAffected > 0)
+                        {
+                            MessageBox.Show("Record updated successfuly", "Personal Tracking Automation", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                        }
+                        else
+                        {
+                            MessageBox.Show("No record found with the given TC number", "Personal Tracking Automation", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
+                }
+                LoadPersonals();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occured: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+
+        }
     }
 }
 
