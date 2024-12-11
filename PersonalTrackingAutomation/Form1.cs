@@ -1,6 +1,7 @@
 ﻿using Npgsql;
 using System;
 using System.Windows.Forms;
+using DotNetEnv;
 
 namespace PersonalTrackingAutomation
 {
@@ -67,6 +68,8 @@ namespace PersonalTrackingAutomation
         private void Form1_Load(object sender, EventArgs e)
         {
             this.Text = "User Login";
+            DotNetEnv.Env.Load();
+            string connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
 
         }
 
