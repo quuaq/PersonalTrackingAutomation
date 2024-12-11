@@ -642,6 +642,47 @@ namespace PersonalTrackingAutomation
 
         private void button8_Click(object sender, EventArgs e)
         {
+            string tc_number = maskedTextBox1.Text;
+            string connectionString = "Host=localhost;Port=5432;Database=PersonalTrackingAutomation;Username=postgres;Password=123456";
+
+            if(tc_number.Length == 11 && long.TryParse(tc_number, out _))
+            {
+                try
+                {
+                    using (var connection = new NpgsqlConnection(connectionString))
+                    {
+                        connection.Open();
+
+                        string query = "DELETE FROM personals WHERE tc_number = @tc_number";
+
+                        using (var deleteQuery = new NpgsqlCommand(query, connection))
+                        {
+                            deleteQuery.Parameters.AddWithValue("@tc_number", long.Parse(tc_number));
+                            int rowsfAffected = deleteQuery.ExecuteNonQuery();
+
+                            if(rowsfAffected > 0)
+                            {
+                                MessageBox.Show("Record deleted successfuly.", "Personal Tracking Automation", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                            }
+                            else
+                            {
+                                MessageBox.Show("No record found for the entered TC Number!", "Personal Tracking Automation", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            }
+
+                        }
+                        LoadPersonals();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"An error occured: {ex.Message}", "Personal Tracking Automation", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Please enter a valid TC Number", "Personal Tracking Automation", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
 
         }
 
