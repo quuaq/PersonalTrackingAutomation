@@ -14,8 +14,6 @@ namespace PersonalTrackingAutomation
         [STAThread]
         static void Main()
         {
-            DotNetEnv.Env.Load();
-
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form1());
