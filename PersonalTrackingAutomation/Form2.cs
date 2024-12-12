@@ -1,5 +1,6 @@
 ﻿using Npgsql;
 using System;
+using DotNetEnv;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -12,6 +13,7 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
+
 namespace PersonalTrackingAutomation
 {
     public partial class Form2 : Form
@@ -19,6 +21,7 @@ namespace PersonalTrackingAutomation
         public Form2()
         {
             InitializeComponent();
+            DotNetEnv.Env.Load();
             LoadUsers();
             LoadPersonals();
         }
@@ -28,7 +31,7 @@ namespace PersonalTrackingAutomation
 
         private void LoadUsers()
         {
-            string connectionString = "Host=localhost;Port=5432;Database=PersonalTrackingAutomation;Username=postgres;Password=123456;";
+            string connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
 
             try
             {
@@ -56,7 +59,7 @@ namespace PersonalTrackingAutomation
 
         private void LoadPersonals()
         {
-            string connectionString = "Host=localhost;Port=5432;Database=PersonalTrackingAutomation;Username=postgres;Password=123456";
+            string connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
 
             try
             {
@@ -104,7 +107,7 @@ namespace PersonalTrackingAutomation
         private void RegisterUser()
         {
             bool kayitKontrol = false;
-            string connectionString = "Host=localhost;Port=5432;Database=PersonalTrackingAutomation;Username=postgres;Password=123456;";
+            string connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
 
             try
             {
@@ -189,7 +192,7 @@ namespace PersonalTrackingAutomation
 
         private void UpdateUser()
         {
-            string connectionString = "Host=localhost;Port=5432;Database=PersonalTrackingAutomation;Username=postgres;Password=123456;";
+            string connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
 
             try
             {
@@ -221,7 +224,7 @@ namespace PersonalTrackingAutomation
 
         private void DeleteUser()
         {
-            string connectionString = "Host=localhost;Port=5432;Database=PersonalTrackingAutomation;Username=postgres;password=123456";
+            string connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
 
             // Ask the user for the name of the person they want to delete
             string userNameToDelete = Microsoft.VisualBasic.Interaction.InputBox(
@@ -335,9 +338,9 @@ namespace PersonalTrackingAutomation
         private void button5_Click(object sender, EventArgs e)
         {
             bool registerSearchStatus = false; //Variable to check whether a record is found or not
-            string connectionString = "Host=localhost;Port=5432;Database=PersonalTrackingAutomation;Username=postgres;Password=123456";
+            string connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
 
-            if(textBox1.Text.Length == 11)
+            if (textBox1.Text.Length == 11)
             {
                 try
                 {
@@ -416,7 +419,7 @@ namespace PersonalTrackingAutomation
         private void button10_Click(object sender, EventArgs e)
         {
             bool register_search_status = false;
-            string connectionString = "Host=localhost;Port=5432;Database=PersonalTrackingAutomation;Username=postgres;Password=123456";
+            string connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
 
 
             if (maskedTextBox1.Text.Length == 11)
@@ -532,7 +535,7 @@ namespace PersonalTrackingAutomation
             string gender = "";
             bool registerControl = false;
 
-            string connectionString = "Host=localhost;Port=5432;Database=PersonalTrackingAutomation;Username=postgres;Password=123456";
+            string connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
 
             try
             {
@@ -643,9 +646,9 @@ namespace PersonalTrackingAutomation
         private void button8_Click(object sender, EventArgs e)
         {
             string tc_number = maskedTextBox1.Text;
-            string connectionString = "Host=localhost;Port=5432;Database=PersonalTrackingAutomation;Username=postgres;Password=123456";
+            string connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
 
-            if(tc_number.Length == 11 && long.TryParse(tc_number, out _))
+            if (tc_number.Length == 11 && long.TryParse(tc_number, out _))
             {
                 try
                 {
@@ -688,8 +691,7 @@ namespace PersonalTrackingAutomation
 
         private void button7_Click(object sender, EventArgs e)
         {
-            string connectionString = "Host=localhost;Port=5432;Database=PersonalTrackingAutomation;Username=postgres;Password=123456";
-
+            string connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
             string tc_number = maskedTextBox1.Text;
             if(tc_number.Length != 11 || !long.TryParse(tc_number, out _))
             {

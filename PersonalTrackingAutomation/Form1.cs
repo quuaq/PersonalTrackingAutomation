@@ -1,6 +1,9 @@
 ﻿using Npgsql;
 using System;
 using System.Windows.Forms;
+using DotNetEnv;
+
+
 
 namespace PersonalTrackingAutomation
 {
@@ -9,13 +12,15 @@ namespace PersonalTrackingAutomation
         public Form1()
         {
             InitializeComponent();
+            DotNetEnv.Env.Load();
             txtPassword.PasswordChar = '*';
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
 
-            string connectionString = "Host=localhost;Port=5432;Database=PersonalTrackingAutomation;Username=postgres;Password=123456;";
+            string connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
+
 
             try
             {
