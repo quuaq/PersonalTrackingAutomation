@@ -72,11 +72,30 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.btnRefreshLogs = new System.Windows.Forms.Button();
+            this.dgvLogs = new System.Windows.Forms.DataGridView();
+            this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.btnRefreshTask = new System.Windows.Forms.Button();
+            this.dgvTasks = new System.Windows.Forms.DataGridView();
+            this.btnAssignTask = new System.Windows.Forms.Button();
+            this.label18 = new System.Windows.Forms.Label();
+            this.cmbUserTC = new System.Windows.Forms.ComboBox();
+            this.dtpDueDate = new System.Windows.Forms.DateTimePicker();
+            this.label17 = new System.Windows.Forms.Label();
+            this.label16 = new System.Windows.Forms.Label();
+            this.rtbTaskDescription = new System.Windows.Forms.RichTextBox();
+            this.label15 = new System.Windows.Forms.Label();
+            this.txtTaskTitle = new System.Windows.Forms.TextBox();
             this.tabPage2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.tabControl1.SuspendLayout();
+            this.tabPage3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvLogs)).BeginInit();
+            this.tabPage4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvTasks)).BeginInit();
             this.SuspendLayout();
             // 
             // tabPage2
@@ -513,11 +532,162 @@
             // 
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Controls.Add(this.tabPage3);
+            this.tabControl1.Controls.Add(this.tabPage4);
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(955, 590);
             this.tabControl1.TabIndex = 0;
+            // 
+            // tabPage3
+            // 
+            this.tabPage3.Controls.Add(this.btnRefreshLogs);
+            this.tabPage3.Controls.Add(this.dgvLogs);
+            this.tabPage3.Location = new System.Drawing.Point(4, 25);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Size = new System.Drawing.Size(947, 561);
+            this.tabPage3.TabIndex = 2;
+            this.tabPage3.Text = "Logs";
+            this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // btnRefreshLogs
+            // 
+            this.btnRefreshLogs.Location = new System.Drawing.Point(722, 472);
+            this.btnRefreshLogs.Name = "btnRefreshLogs";
+            this.btnRefreshLogs.Size = new System.Drawing.Size(159, 47);
+            this.btnRefreshLogs.TabIndex = 1;
+            this.btnRefreshLogs.Text = "Refresh Logs";
+            this.btnRefreshLogs.UseVisualStyleBackColor = true;
+            this.btnRefreshLogs.Click += new System.EventHandler(this.btnRefreshLogs_Click);
+            // 
+            // dgvLogs
+            // 
+            this.dgvLogs.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvLogs.Location = new System.Drawing.Point(35, 49);
+            this.dgvLogs.Name = "dgvLogs";
+            this.dgvLogs.RowHeadersWidth = 51;
+            this.dgvLogs.RowTemplate.Height = 24;
+            this.dgvLogs.Size = new System.Drawing.Size(846, 403);
+            this.dgvLogs.TabIndex = 0;
+            // 
+            // tabPage4
+            // 
+            this.tabPage4.Controls.Add(this.btnRefreshTask);
+            this.tabPage4.Controls.Add(this.dgvTasks);
+            this.tabPage4.Controls.Add(this.btnAssignTask);
+            this.tabPage4.Controls.Add(this.label18);
+            this.tabPage4.Controls.Add(this.cmbUserTC);
+            this.tabPage4.Controls.Add(this.dtpDueDate);
+            this.tabPage4.Controls.Add(this.label17);
+            this.tabPage4.Controls.Add(this.label16);
+            this.tabPage4.Controls.Add(this.rtbTaskDescription);
+            this.tabPage4.Controls.Add(this.label15);
+            this.tabPage4.Controls.Add(this.txtTaskTitle);
+            this.tabPage4.Location = new System.Drawing.Point(4, 25);
+            this.tabPage4.Name = "tabPage4";
+            this.tabPage4.Size = new System.Drawing.Size(947, 561);
+            this.tabPage4.TabIndex = 3;
+            this.tabPage4.Text = "Tasks";
+            this.tabPage4.UseVisualStyleBackColor = true;
+            this.tabPage4.Click += new System.EventHandler(this.tabPage4_Click);
+            // 
+            // btnRefreshTask
+            // 
+            this.btnRefreshTask.Location = new System.Drawing.Point(793, 437);
+            this.btnRefreshTask.Name = "btnRefreshTask";
+            this.btnRefreshTask.Size = new System.Drawing.Size(133, 48);
+            this.btnRefreshTask.TabIndex = 10;
+            this.btnRefreshTask.Text = "Refresh";
+            this.btnRefreshTask.UseVisualStyleBackColor = true;
+            this.btnRefreshTask.Click += new System.EventHandler(this.btnRefreshTask_Click);
+            // 
+            // dgvTasks
+            // 
+            this.dgvTasks.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvTasks.Location = new System.Drawing.Point(497, 63);
+            this.dgvTasks.Name = "dgvTasks";
+            this.dgvTasks.RowHeadersWidth = 51;
+            this.dgvTasks.RowTemplate.Height = 24;
+            this.dgvTasks.Size = new System.Drawing.Size(429, 349);
+            this.dgvTasks.TabIndex = 9;
+            // 
+            // btnAssignTask
+            // 
+            this.btnAssignTask.Location = new System.Drawing.Point(152, 389);
+            this.btnAssignTask.Name = "btnAssignTask";
+            this.btnAssignTask.Size = new System.Drawing.Size(75, 23);
+            this.btnAssignTask.TabIndex = 8;
+            this.btnAssignTask.Text = "Add";
+            this.btnAssignTask.UseVisualStyleBackColor = true;
+            this.btnAssignTask.Click += new System.EventHandler(this.btnAssignTask_Click);
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(35, 326);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(25, 16);
+            this.label18.TabIndex = 7;
+            this.label18.Text = "TC";
+            // 
+            // cmbUserTC
+            // 
+            this.cmbUserTC.FormattingEnabled = true;
+            this.cmbUserTC.Location = new System.Drawing.Point(152, 318);
+            this.cmbUserTC.Name = "cmbUserTC";
+            this.cmbUserTC.Size = new System.Drawing.Size(121, 24);
+            this.cmbUserTC.TabIndex = 6;
+            // 
+            // dtpDueDate
+            // 
+            this.dtpDueDate.Location = new System.Drawing.Point(152, 244);
+            this.dtpDueDate.Name = "dtpDueDate";
+            this.dtpDueDate.Size = new System.Drawing.Size(200, 22);
+            this.dtpDueDate.TabIndex = 5;
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(35, 251);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(64, 16);
+            this.label17.TabIndex = 4;
+            this.label17.Text = "Due Date";
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(32, 118);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(109, 16);
+            this.label16.TabIndex = 3;
+            this.label16.Text = "Task Description";
+            // 
+            // rtbTaskDescription
+            // 
+            this.rtbTaskDescription.Location = new System.Drawing.Point(152, 115);
+            this.rtbTaskDescription.Name = "rtbTaskDescription";
+            this.rtbTaskDescription.Size = new System.Drawing.Size(214, 96);
+            this.rtbTaskDescription.TabIndex = 2;
+            this.rtbTaskDescription.Text = "";
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(29, 63);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(38, 16);
+            this.label15.TabIndex = 1;
+            this.label15.Text = "Task";
+            this.label15.Click += new System.EventHandler(this.label15_Click);
+            // 
+            // txtTaskTitle
+            // 
+            this.txtTaskTitle.Location = new System.Drawing.Point(152, 63);
+            this.txtTaskTitle.Name = "txtTaskTitle";
+            this.txtTaskTitle.Size = new System.Drawing.Size(100, 22);
+            this.txtTaskTitle.TabIndex = 0;
             // 
             // Form2
             // 
@@ -535,6 +705,11 @@
             this.tabPage1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.tabControl1.ResumeLayout(false);
+            this.tabPage3.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dgvLogs)).EndInit();
+            this.tabPage4.ResumeLayout(false);
+            this.tabPage4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvTasks)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -585,5 +760,20 @@
         private System.Windows.Forms.MaskedTextBox maskedTextBox2;
         private System.Windows.Forms.MaskedTextBox maskedTextBox1;
         private System.Windows.Forms.MaskedTextBox maskedTextBox4;
+        private System.Windows.Forms.TabPage tabPage3;
+        private System.Windows.Forms.Button btnRefreshLogs;
+        private System.Windows.Forms.DataGridView dgvLogs;
+        private System.Windows.Forms.TabPage tabPage4;
+        private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.TextBox txtTaskTitle;
+        private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.ComboBox cmbUserTC;
+        private System.Windows.Forms.DateTimePicker dtpDueDate;
+        private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.RichTextBox rtbTaskDescription;
+        private System.Windows.Forms.Button btnRefreshTask;
+        private System.Windows.Forms.DataGridView dgvTasks;
+        private System.Windows.Forms.Button btnAssignTask;
     }
 }

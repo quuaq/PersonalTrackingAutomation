@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using Microsoft.VisualBasic;
 
 
 namespace PersonalTrackingAutomation
@@ -24,10 +25,40 @@ namespace PersonalTrackingAutomation
             DotNetEnv.Env.Load();
             LoadUsers();
             LoadPersonals();
+            LoadLogs();
         }
 
 
         //string connectionString = "Host=localhost;Port5432;Database=PersonalTrackingAutomation;Username=postgres;Password=123456";
+
+        private void LoadLogs()
+        {
+            string connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
+
+            try
+            {
+                using (var connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    string query = "SELECT * FROM logs ORDER BY timestamp DESC;";
+                    using (var cmd = new NpgsqlCommand(query, connection))
+                    {
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            DataTable dt = new DataTable();
+                            dt.Load(reader);
+                            dgvLogs.DataSource = dt; // Logs DataGridView'e bağlanıyor
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Loglar yüklenirken hata oluştu: {ex.Message}");
+            }
+        }
+
 
         private void LoadUsers()
         {
@@ -176,6 +207,14 @@ namespace PersonalTrackingAutomation
                                 DialogResult result = MessageBox.Show("New user is registered", "Personal Tracking Automation", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                                 
+                            }   
+
+                            string logQuery = "INSERT INTO logs (tc_number, action) VALUES (@tc_number, @action);";
+                            using (var logCmd = new NpgsqlCommand(logQuery, connection))
+                            {
+                                logCmd.Parameters.AddWithValue("tc_number", textBox1.Text);
+                                logCmd.Parameters.AddWithValue("action", "New user added.");
+                                logCmd.ExecuteNonQuery();
                             }
 
                             LoadUsers(); 
@@ -212,7 +251,16 @@ namespace PersonalTrackingAutomation
                         cmd.ExecuteNonQuery();
                         MessageBox.Show("User is updated successfuly!");
                     }
-                 }
+
+                    string logQuery = "INSERT INTO logs (tc_number, action) VALUES (@tc_number, @action);";
+                    using (var logCmd = new NpgsqlCommand(logQuery, connection))
+                    {
+                        logCmd.Parameters.AddWithValue("tc_number", textBox1.Text);
+                        logCmd.Parameters.AddWithValue("action", "User information updated.");
+                        logCmd.ExecuteNonQuery();
+                    }
+                }
+
                 LoadUsers(); // Refreshing the datagridview and database table
             }
             catch (Exception ex)
@@ -316,6 +364,10 @@ namespace PersonalTrackingAutomation
             dateTimePicker1.MinDate = new DateTime(1960, 1, 1);
             dateTimePicker1.MaxDate = new DateTime(year - 18, month, day);
             dateTimePicker1.Format = DateTimePickerFormat.Long;
+
+            PopulateUserComboBox();
+            LoadTasks();
+            FormatTaskGridView();
         }
 
 
@@ -751,6 +803,169 @@ namespace PersonalTrackingAutomation
             }
 
 
+        }
+
+        private void PopulateUserComboBox()
+        {
+            string connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
+
+            try
+            {
+                using (var connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    string query = "SELECT tc_number FROM users ORDER BY tc_number ASC;";
+                    using (var cmd = new NpgsqlCommand(query, connection))
+                    {
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                cmbUserTC.Items.Add(reader["tc_number"].ToString());
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error loading TC numbers: {ex.Message}");
+            }
+        }
+
+        private void AssignTask(string tcNumber, string title, string description, DateTime dueDate)
+        {
+            string connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
+
+            try
+            {
+                using (var connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    string query = "INSERT INTO tasks (tc_number, task_title, task_description, due_date) VALUES (@tc_number, @task_title, @task_description, @due_date);";
+
+                    using (var cmd = new NpgsqlCommand(query, connection))
+                    {
+                        cmd.Parameters.AddWithValue("tc_number", tcNumber);
+                        cmd.Parameters.AddWithValue("task_title", title);
+                        cmd.Parameters.AddWithValue("task_description", description);
+                        cmd.Parameters.AddWithValue("due_date", dueDate);
+
+                        cmd.ExecuteNonQuery();
+                        MessageBox.Show("Task assigned successfully!");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred while assigning the task: {ex.Message}");
+            }
+        }
+
+
+        private void btnRefreshLogs_Click(object sender, EventArgs e)
+        {
+            LoadLogs();
+        }
+
+        private void label15_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void tabPage4_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnAssignTask_Click(object sender, EventArgs e)
+        {
+            string connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
+
+            try
+            {
+            
+                if (!long.TryParse(cmbUserTC.Text, out long tcNumber))
+                {
+                    MessageBox.Show("Please select a valid TC number.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                if (string.IsNullOrWhiteSpace(txtTaskTitle.Text) || string.IsNullOrWhiteSpace(rtbTaskDescription.Text))
+                {
+                    MessageBox.Show("Please fill in all the fields.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                using (var connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    string query = "INSERT INTO tasks (tc_number, task_title, task_description, due_date) VALUES (@tc_number, @task_title, @task_description, @due_date);";
+
+                    using (var cmd = new NpgsqlCommand(query, connection))
+                    {
+                        cmd.Parameters.AddWithValue("tc_number", tcNumber); // `long` olarak gönderiliyor
+                        cmd.Parameters.AddWithValue("task_title", txtTaskTitle.Text);
+                        cmd.Parameters.AddWithValue("task_description", rtbTaskDescription.Text);
+                        cmd.Parameters.AddWithValue("due_date", dtpDueDate.Value);
+
+                        cmd.ExecuteNonQuery();
+                        MessageBox.Show("Task assigned successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred while assigning the task: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+
+        private void LoadTasks()
+        {
+            string connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
+
+            try
+            {
+                using (var connection = new NpgsqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    string query = "SELECT task_id, tc_number, task_title, task_description, due_date FROM tasks ORDER BY due_date ASC;";
+                    using (var cmd = new NpgsqlCommand(query, connection))
+                    {
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            DataTable dt = new DataTable();
+                            dt.Load(reader);
+                            dgvTasks.DataSource = dt;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error loading tasks: {ex.Message}");
+            }
+        }
+
+        private void FormatTaskGridView()
+        {
+            dgvTasks.Columns["task_id"].Visible = false; // ID'yi gizle
+            dgvTasks.Columns["tc_number"].HeaderText = "TC Number";
+            dgvTasks.Columns["task_title"].HeaderText = "Task Title";
+            dgvTasks.Columns["task_description"].HeaderText = "Description";
+            dgvTasks.Columns["due_date"].HeaderText = "Due Date";
+
+            dgvTasks.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+        }
+
+        private void btnRefreshTask_Click(object sender, EventArgs e)
+        {
+            LoadTasks();
         }
     }
 }
