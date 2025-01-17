@@ -29,7 +29,7 @@ namespace PersonalTrackingAutomation
         }
 
 
-        //string connectionString = "Host=localhost;Port5432;Database=PersonalTrackingAutomation;Username=postgres;Password=123456";
+        
 
         private void LoadLogs()
         {
